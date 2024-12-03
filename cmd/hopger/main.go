@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/tunnelchaos/hopger/pkg/config"
+	"github.com/tunnelchaos/hopger/pkg/pretalxConverter"
 	rssconverter "github.com/tunnelchaos/hopger/pkg/rssConverter"
 )
 
@@ -26,7 +27,16 @@ func main() {
 			switch info.Type {
 			case config.InfoTypeRSS:
 				log.Printf("    Type: RSS")
-				rssconverter.Convert(event.Name, info, conf.Server)
+				err := rssconverter.Convert(event.Name, info, conf.Server)
+				if err != nil {
+					log.Printf("    Error: %v", err)
+				}
+			case config.InfoPretalx:
+				log.Printf("    Type: Pretalx")
+				pretalxConverter.Convert(event.Name, info, conf.Server)
+				if err != nil {
+					log.Printf("    Error: %v", err)
+				}
 			}
 		}
 	}

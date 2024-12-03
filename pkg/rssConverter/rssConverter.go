@@ -3,7 +3,6 @@ package rssconverter
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"os"
 	"path"
 	"strings"
@@ -69,7 +68,6 @@ func Convert(eventname string, info config.Info, server config.Server) error {
 	if err != nil {
 		return errors.New("Failed to parse RSS feed: " + err.Error())
 	}
-	fmt.Println(feed.Title)
 	if len(feed.Items) == 0 {
 		return nil
 	}

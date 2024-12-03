@@ -12,6 +12,7 @@ type InfoType int
 const (
 	InfoTypeRSS InfoType = iota
 	InfoTypeICal
+	InfoPretalx
 )
 
 type Info struct {
