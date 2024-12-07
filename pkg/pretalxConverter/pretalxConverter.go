@@ -16,6 +16,8 @@ import (
 	"github.com/tunnelchaos/hopger/pkg/helpers"
 )
 
+type PretalxConverter struct{}
+
 func parseDuration(input string) (time.Duration, error) {
 	parts := strings.Split(input, ":")
 	if len(parts) != 2 {
@@ -122,7 +124,7 @@ func eventToGopher(event Event, loc *time.Location, addDate bool, addSaal bool) 
 	return eventstring
 }
 
-func Convert(eventname string, info config.Info, server config.Server) error {
+func (p *PretalxConverter) Convert(eventname string, info config.Info, server config.Server) error {
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}

@@ -5,13 +5,19 @@ import (
 	"log"
 
 	"github.com/tunnelchaos/hopger/pkg/config"
+	"github.com/tunnelchaos/hopger/pkg/converter"
 	"github.com/tunnelchaos/hopger/pkg/pretalxConverter"
-	rssconverter "github.com/tunnelchaos/hopger/pkg/rssConverter"
+	"github.com/tunnelchaos/hopger/pkg/rssConverter"
 )
 
 var (
 	configPath string
 )
+
+var converterRegistry = map[config.InfoType]converter.Converter{
+	config.InfoTypeRSS: &rssConverter.RSSConverter{},
+	config.InfoPretalx: &pretalxConverter.PretalxConverter{},
+}
 
 func main() {
 	flag.StringVar(&configPath, "config", "config.toml", "path to the config file")
@@ -24,19 +30,14 @@ func main() {
 		log.Printf("Event: %s", event.Name)
 		for _, info := range event.Infos {
 			log.Printf("  Info: %s", info.Name)
-			switch info.Type {
-			case config.InfoTypeRSS:
-				log.Printf("    Type: RSS")
-				err := rssconverter.Convert(event.Name, info, conf.Server)
-				if err != nil {
-					log.Printf("    Error: %v", err)
-				}
-			case config.InfoPretalx:
-				log.Printf("    Type: Pretalx")
-				pretalxConverter.Convert(event.Name, info, conf.Server)
-				if err != nil {
-					log.Printf("    Error: %v", err)
-				}
+			converter, exists := converterRegistry[info.Type]
+			if !exists {
+				log.Println("No converter found for this info type:", info.Type)
+				continue
+			}
+			err := converter.Convert(event.Name, info, conf.Server)
+			if err != nil {
+				log.Printf("Failed to convert info: %v", err)
 			}
 		}
 	}

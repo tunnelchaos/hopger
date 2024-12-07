@@ -13,6 +13,7 @@ const (
 	InfoTypeRSS InfoType = iota
 	InfoTypeICal
 	InfoPretalx
+	InfoHubAssemblies
 )
 
 type Info struct {

@@ -1,4 +1,4 @@
-package rssconverter
+package rssConverter
 
 import (
 	"bytes"
@@ -11,6 +11,8 @@ import (
 	"github.com/tunnelchaos/hopger/pkg/config"
 	"golang.org/x/net/html"
 )
+
+type RSSConverter struct{}
 
 func extractText(n *html.Node) string {
 	if n.Type == html.TextNode {
@@ -62,7 +64,7 @@ func convertHTMLToText(htmlContent string) (string, error) {
 	return text, nil
 }
 
-func Convert(eventname string, info config.Info, server config.Server) error {
+func (r *RSSConverter) Convert(eventname string, info config.Info, server config.Server) error {
 	fp := gofeed.NewParser()
 	feed, err := fp.ParseURL(info.URL)
 	if err != nil {
