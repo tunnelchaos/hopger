@@ -14,6 +14,7 @@ const (
 	InfoTypeICal
 	InfoPretalx
 	InfoHubAssemblies
+	InfoHubEvents
 )
 
 type Info struct {

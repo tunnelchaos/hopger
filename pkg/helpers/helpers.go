@@ -45,6 +45,14 @@ func FormatForGopherMap(indent int, header string, content string) string {
 	return section
 }
 
+func CreateEventHeader(title string) string {
+	result := title
+	result += CreateMaxLine("=") + "\n"
+	result += "Time          | Event\n"
+	result += CreateMaxLine("-") + "\n"
+	return result
+}
+
 func CreateGopherEntry(selectortype string, Name string, selector string, host string, port string) string {
 	return selectortype + Name + "\t" + selector + "\t" + host + "\t" + port + "\n"
 }

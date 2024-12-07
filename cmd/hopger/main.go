@@ -7,6 +7,7 @@ import (
 	"github.com/tunnelchaos/hopger/pkg/assemblyConverter"
 	"github.com/tunnelchaos/hopger/pkg/config"
 	"github.com/tunnelchaos/hopger/pkg/converter"
+	"github.com/tunnelchaos/hopger/pkg/hubEventsConverter"
 	"github.com/tunnelchaos/hopger/pkg/pretalxConverter"
 	"github.com/tunnelchaos/hopger/pkg/rssConverter"
 )
@@ -19,6 +20,7 @@ var converterRegistry = map[config.InfoType]converter.Converter{
 	config.InfoTypeRSS:       &rssConverter.RSSConverter{},
 	config.InfoPretalx:       &pretalxConverter.PretalxConverter{},
 	config.InfoHubAssemblies: &assemblyConverter.AssemblyConverter{},
+	config.InfoHubEvents:     &hubEventsConverter.HubEventsConverter{},
 }
 
 func main() {
