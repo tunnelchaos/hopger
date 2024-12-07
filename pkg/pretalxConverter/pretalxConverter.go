@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 	"os"
 	"path"
 	"sort"
@@ -36,24 +35,6 @@ func parseDuration(input string) (time.Duration, error) {
 
 	// Convert to time.Duration
 	return time.Duration(hours)*time.Hour + time.Duration(minutes)*time.Minute, nil
-}
-
-func formatSection(indent int, header string, content string) string {
-	content = strings.ReplaceAll(content, "\n", "")
-	indentstring := strings.Repeat(" ", indent)
-	header = header + strings.Repeat(" ", indent-len(header))
-	words := strings.Fields(content)
-	section := ""
-	currentline := header
-	for _, word := range words {
-		if len(currentline)+len(word)+1 > 70 {
-			section += currentline + "\n"
-			currentline = indentstring
-		}
-		currentline += word + " "
-	}
-	section += currentline + "\n"
-	return section
 }
 
 func sortEvents(events []Event) error {
@@ -93,18 +74,18 @@ func eventToGopher(event Event, loc *time.Location, addDate bool, addSaal bool) 
 
 	timestring := starttime.In(loc).Format("15:04") + " - " + endtime.In(loc).Format("15:04") + "   "
 	indent := len(timestring)
-	eventstring := formatSection(indent, timestring, event.Title)
+	eventstring := helpers.FormatInfo(indent, timestring, event.Title)
 	if addDate {
 		d, err := time.Parse(time.RFC3339, event.Date)
 		if err != nil {
 			return "Failed to parse event date: " + err.Error() + "\n"
 		}
-		eventstring = eventstring + formatSection(indent, "Date:", d.In(loc).Format("2006-01-02"))
+		eventstring = eventstring + helpers.FormatInfo(indent, "Date:", d.In(loc).Format("2006-01-02"))
 	}
 	if addSaal {
-		eventstring = eventstring + formatSection(indent, "Room:", event.saal)
+		eventstring = eventstring + helpers.FormatInfo(indent, "Room:", event.saal)
 	}
-	eventstring += formatSection(indent, "Description:", event.Description)
+	eventstring += helpers.FormatInfo(indent, "Description:", event.Description)
 	speakerHeaer := "Speaker"
 	if len(event.Persons) > 1 {
 		speakerHeaer += "s"
@@ -117,18 +98,16 @@ func eventToGopher(event Event, loc *time.Location, addDate bool, addSaal bool) 
 			speakerstring += ", "
 		}
 	}
-	eventstring += formatSection(indent, speakerHeaer, speakerstring)
-	eventstring += formatSection(indent, "Language:", event.Language)
-	eventstring += formatSection(indent, "Track:", event.Track)
+	eventstring += helpers.FormatInfo(indent, speakerHeaer, speakerstring)
+	eventstring += helpers.FormatInfo(indent, "Language:", event.Language)
+	eventstring += helpers.FormatInfo(indent, "Track:", event.Track)
 	eventstring += helpers.CreateMaxLine("-") + "\n"
 	return eventstring
 }
 
 func (p *PretalxConverter) Convert(eventname string, info config.Info, server config.Server) error {
-	var netClient = &http.Client{
-		Timeout: time.Second * 10,
-	}
-	response, err := netClient.Get(info.URL)
+	httpClient := helpers.CreateHttpClient()
+	response, err := httpClient.Get(info.URL)
 	if err != nil {
 		return errors.New("Failed to fetch pretalx schedule from URL: " + info.URL + ":" + err.Error())
 	}
