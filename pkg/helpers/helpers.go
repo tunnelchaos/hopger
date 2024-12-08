@@ -46,7 +46,7 @@ func FormatForGopherMap(indent int, header string, content string) string {
 }
 
 func CreateEventHeader(title string) string {
-	result := title
+	result := title + "\n"
 	result += CreateMaxLine("=") + "\n"
 	result += "Time          | Event\n"
 	result += CreateMaxLine("-") + "\n"
