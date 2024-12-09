@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/tunnelchaos/hopger/pkg/config"
+	"github.com/tunnelchaos/hopger/pkg/gopherhelpers"
 	"github.com/tunnelchaos/hopger/pkg/helpers"
 )
 
@@ -26,17 +27,17 @@ type assembly struct {
 	BadgesURL        string `json:"badges_url"`
 }
 
-func (a *assembly) toGopher(Server, Port string) string {
+func (a *assembly) toGopher(Server string, Port int) string {
 	maxline := len("Parent: ")
 	parent := ""
-	result := helpers.CreateGopherInfo(helpers.FormatForGopherMap(maxline, "Name:", a.Name))
+	result := gopherhelpers.CreateGopherInfo(gopherhelpers.FormatForGopherMap(maxline, "Name:", a.Name))
 	if a.Parent != nil {
 		//Interpret parent as string
 		parent = a.Parent.(string)
 	}
-	result += helpers.CreateGopherInfo(helpers.FormatForGopherMap(maxline, "Parent:", parent))
-	result += helpers.CreateGopherURL(helpers.FormatForGopherMap(maxline, "Link:", ""), a.AssemblyLink, Server, Port)
-	result += helpers.CreateGopherInfo(helpers.FillLineWithChar("", helpers.MaxLine-1, "-"))
+	result += gopherhelpers.CreateGopherInfo(gopherhelpers.FormatForGopherMap(maxline, "Parent:", parent))
+	result += gopherhelpers.CreateGopherURL(gopherhelpers.FormatForGopherMap(maxline, "Link:", ""), a.AssemblyLink, Server, Port)
+	result += gopherhelpers.CreateGopherInfo(gopherhelpers.FillLineWithChar("", gopherhelpers.MaxLine-1, "-"))
 	return result
 }
 
@@ -54,8 +55,8 @@ func (ac *AssemblyConverter) Convert(eventname string, info config.Info, server 
 		return errors.New("Failed to parse assembly data: " + info.Name + ":" + err.Error())
 	}
 	// Convert assemblies to gopher
-	result := helpers.CreateGopherInfo(fmt.Sprintf("All Assemblies from %s", eventname))
-	result += helpers.CreateGopherInfo(helpers.FillLineWithChar("", helpers.MaxLine-1, "="))
+	result := gopherhelpers.CreateGopherInfo(fmt.Sprintf("All Assemblies from %s", eventname))
+	result += gopherhelpers.CreateGopherInfo(gopherhelpers.FillLineWithChar("", gopherhelpers.MaxLine-1, "="))
 	for _, assembly := range assemblies {
 		result += assembly.toGopher(server.Hostname, server.GopherPort)
 	}

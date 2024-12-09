@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/tunnelchaos/hopger/pkg/config"
+	"github.com/tunnelchaos/hopger/pkg/gopherhelpers"
 	"github.com/tunnelchaos/hopger/pkg/helpers"
 )
 
@@ -74,18 +75,18 @@ func eventToGopher(event Event, loc *time.Location, addDate bool, addSaal bool) 
 
 	timestring := starttime.In(loc).Format("15:04") + " - " + endtime.In(loc).Format("15:04") + "   "
 	indent := len(timestring)
-	eventstring := helpers.FormatInfo(indent, timestring, event.Title)
+	eventstring := gopherhelpers.FormatInfo(indent, timestring, event.Title)
 	if addDate {
 		d, err := time.Parse(time.RFC3339, event.Date)
 		if err != nil {
 			return "Failed to parse event date: " + err.Error() + "\n"
 		}
-		eventstring = eventstring + helpers.FormatInfo(indent, "Date:", d.In(loc).Format("2006-01-02"))
+		eventstring = eventstring + gopherhelpers.FormatInfo(indent, "Date:", d.In(loc).Format("2006-01-02"))
 	}
 	if addSaal {
-		eventstring = eventstring + helpers.FormatInfo(indent, "Room:", event.saal)
+		eventstring = eventstring + gopherhelpers.FormatInfo(indent, "Room:", event.saal)
 	}
-	eventstring += helpers.FormatInfo(indent, "Description:", event.Description)
+	eventstring += gopherhelpers.FormatInfo(indent, "Description:", event.Description)
 	speakerHeaer := "Speaker"
 	if len(event.Persons) > 1 {
 		speakerHeaer += "s"
@@ -98,10 +99,10 @@ func eventToGopher(event Event, loc *time.Location, addDate bool, addSaal bool) 
 			speakerstring += ", "
 		}
 	}
-	eventstring += helpers.FormatInfo(indent, speakerHeaer, speakerstring)
-	eventstring += helpers.FormatInfo(indent, "Language:", event.Language)
-	eventstring += helpers.FormatInfo(indent, "Track:", event.Track)
-	eventstring += helpers.CreateMaxLine("-") + "\n"
+	eventstring += gopherhelpers.FormatInfo(indent, speakerHeaer, speakerstring)
+	eventstring += gopherhelpers.FormatInfo(indent, "Language:", event.Language)
+	eventstring += gopherhelpers.FormatInfo(indent, "Track:", event.Track)
+	eventstring += gopherhelpers.CreateMaxLine("-") + "\n"
 	return eventstring
 }
 
@@ -134,9 +135,9 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 		os.MkdirAll(daypath, 0755)
 		for name, events := range day.Rooms {
 			roomstring := "Room: " + name + "\n"
-			roomstring += helpers.CreateMaxLine("=") + "\n"
+			roomstring += gopherhelpers.CreateMaxLine("=") + "\n"
 			roomstring += "Time          | Event\n"
-			roomstring += helpers.CreateMaxLine("-") + "\n"
+			roomstring += gopherhelpers.CreateMaxLine("-") + "\n"
 			for _, event := range events {
 				e := event
 				e.saal = name
@@ -160,9 +161,9 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 	for k, v := range tracks {
 		trackpath := path.Join(bytrackpath, k)
 		trackstring := "Track: " + k + "\n"
-		trackstring += helpers.CreateMaxLine("=") + "\n"
+		trackstring += gopherhelpers.CreateMaxLine("=") + "\n"
 		trackstring += "Time          | Event\n"
-		trackstring += helpers.CreateMaxLine("-") + "\n"
+		trackstring += gopherhelpers.CreateMaxLine("-") + "\n"
 		sortEvents(v)
 		for _, event := range v {
 			trackstring += eventToGopher(event, loc, true, true)

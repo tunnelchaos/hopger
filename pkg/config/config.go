@@ -30,7 +30,7 @@ type Event struct {
 
 type Server struct {
 	GopherDir  string
-	GopherPort string
+	GopherPort int
 	Hostname   string
 }
 

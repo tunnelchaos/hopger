@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/tunnelchaos/hopger/pkg/config"
+	"github.com/tunnelchaos/hopger/pkg/gopherhelpers"
 	"github.com/tunnelchaos/hopger/pkg/helpers"
 )
 
@@ -61,14 +62,14 @@ func (e *HubEvent) eventToGopher(loc *time.Location, addDate bool) string {
 
 	timestring := e.ScheduleStart.In(loc).Format("15:04") + " - " + e.ScheduleEnd.In(loc).Format("15:04") + "   "
 	indent := len(timestring)
-	eventstring := helpers.FormatInfo(indent, timestring, e.Name)
+	eventstring := gopherhelpers.FormatInfo(indent, timestring, e.Name)
 	if addDate {
-		eventstring = eventstring + helpers.FormatInfo(indent, "Date:", e.ScheduleStart.In(loc).Format("2006-01-02"))
+		eventstring = eventstring + gopherhelpers.FormatInfo(indent, "Date:", e.ScheduleStart.In(loc).Format("2006-01-02"))
 	}
-	eventstring += helpers.FormatInfo(indent, "Description:", e.Description)
-	eventstring += helpers.FormatInfo(indent, "Language:", e.Language)
-	eventstring += helpers.FormatInfo(indent, "Track:", e.Track)
-	eventstring += helpers.CreateMaxLine("-") + "\n"
+	eventstring += gopherhelpers.FormatInfo(indent, "Description:", e.Description)
+	eventstring += gopherhelpers.FormatInfo(indent, "Language:", e.Language)
+	eventstring += gopherhelpers.FormatInfo(indent, "Track:", e.Track)
+	eventstring += gopherhelpers.CreateMaxLine("-") + "\n"
 	return eventstring
 }
 
@@ -123,7 +124,7 @@ func (c *HubEventsConverter) Convert(eventname string, info config.Info, server 
 			dayname := "Day " + strconv.Itoa(daycount) + ": " + event.ScheduleStart.Format("2006-01-02")
 			daypath = path.Join(bydatepath, dayname)
 			oldDay = event.ScheduleStart
-			daystring = helpers.CreateEventHeader(dayname)
+			daystring = gopherhelpers.CreateEventHeader(dayname)
 		}
 		daystring += event.eventToGopher(time.Local, false)
 		/*if event.Track != "" {
@@ -134,7 +135,7 @@ func (c *HubEventsConverter) Convert(eventname string, info config.Info, server 
 			tracks[event.Track] += event.eventToGopher(time.Local, true)
 		}*/
 		if assemblies[event.Assembly] == "" {
-			assemblies[event.Assembly] = helpers.CreateEventHeader(event.Assembly)
+			assemblies[event.Assembly] = gopherhelpers.CreateEventHeader(event.Assembly)
 		}
 		assemblies[event.Assembly] += event.eventToGopher(time.Local, true)
 	}
