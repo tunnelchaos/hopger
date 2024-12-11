@@ -9,7 +9,7 @@ import (
 const MaxLine = 70
 
 func FillLineWithChar(line string, length int, char string) string {
-	return strings.Repeat(char, length-len(line))
+	return line + strings.Repeat(char, length-len(line))
 }
 
 func CreateMaxLine(line string) string {
