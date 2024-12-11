@@ -1,9 +1,11 @@
 package gopherhelpers
 
 import (
+	"bytes"
 	"strings"
 
 	"git.mills.io/prologic/go-gopher"
+	"golang.org/x/net/html"
 )
 
 const MaxLine = 70
@@ -71,4 +73,54 @@ func CreateGopherURL(Name string, URL string, Server string, Port int) string {
 
 func CreateGopherInfo(Heading string) string {
 	return CreateGopherEntry(gopher.INFO, Heading, "fake", "(NULL)", 0)
+}
+
+func extractText(n *html.Node) string {
+	if n.Type == html.TextNode {
+		// Get the text from text nodes
+		return n.Data
+	}
+	if n.Type == html.ElementNode && (n.Data == "script" || n.Data == "style") {
+		// Skip <script> and <style> content
+		return ""
+	}
+
+	var buf bytes.Buffer
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		buf.WriteString(extractText(c))
+	}
+
+	// Add spacing for certain elements to preserve readability
+	if n.Type == html.ElementNode {
+		switch n.Data {
+		case "p", "br":
+			buf.WriteString("\n")
+		case "h1", "h2", "h3", "h4", "h5", "h6":
+			headerText := strings.TrimSpace(buf.String())
+			buf.Reset()
+			buf.WriteString(headerText)
+			buf.WriteString("\n" + strings.Repeat("=", len(headerText)) + "\n")
+		case "li":
+			buf.WriteString("- ")
+		}
+	}
+
+	return buf.String()
+}
+
+// ConvertHTMLToText converts HTML content to plain text
+func ConvertHTMLToText(htmlContent string) (string, error) {
+	// Parse the HTML
+	doc, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		return "", err
+	}
+
+	// Extract text
+	text := extractText(doc)
+
+	// Clean up extra whitespace
+	text = strings.TrimSpace(text)
+	text = strings.ReplaceAll(text, "\n\n\n", "\n\n") // Collapse excessive newlines
+	return text, nil
 }
