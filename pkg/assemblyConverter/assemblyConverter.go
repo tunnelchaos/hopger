@@ -7,9 +7,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/tunnelchaos/hopger/pkg/config"
-	"github.com/tunnelchaos/hopger/pkg/gopherhelpers"
-	"github.com/tunnelchaos/hopger/pkg/helpers"
+	"github.com/tunnelchaos/go-packages/config"
+	"github.com/tunnelchaos/go-packages/gopherhelpers"
+	"github.com/tunnelchaos/go-packages/helpers"
 )
 
 type AssemblyConverter struct{}

@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
+	"github.com/tunnelchaos/go-packages/config"
 	"github.com/tunnelchaos/hopger/pkg/assemblyConverter"
-	"github.com/tunnelchaos/hopger/pkg/config"
 	"github.com/tunnelchaos/hopger/pkg/converter"
 	"github.com/tunnelchaos/hopger/pkg/hubEventsConverter"
 	"github.com/tunnelchaos/hopger/pkg/pretalxConverter"
