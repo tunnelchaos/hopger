@@ -144,6 +144,7 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 				e := event
 				e.saal = name
 				eventTrack := strings.TrimSpace(event.Track)
+				eventTrack = strings.ReplaceAll(eventTrack, "/", "-") // Replace slashes to avoid path issues
 				tracks[eventTrack] = append(tracks[eventTrack], e)
 				roomstring += eventToGopher(event, loc, false, false)
 			}
@@ -161,9 +162,7 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 	}
 	bytrackpath := path.Join(basepath, "By Track")
 	os.MkdirAll(bytrackpath, 0755)
-	for k, v := range tracks {
-		trackname := strings.TrimSpace(k)
-		trackname = strings.ReplaceAll(trackname, "/", "-") // Replace slashes to avoid path issues
+	for trackname, v := range tracks {
 		trackpath := path.Join(bytrackpath, trackname)
 		trackstring := "Track: " + trackname + "\n"
 		trackstring += gopherhelpers.CreateMaxLine("=") + "\n"
