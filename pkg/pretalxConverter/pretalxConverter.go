@@ -124,7 +124,9 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 	}
 	tracks := make(map[string][]Event)
 	for _, track := range fahrplan.Schedule.Conference.Tracks {
-		tracks[track.Name] = []Event{}
+		trackname := strings.TrimSpace(track.Name)
+		trackname = strings.ReplaceAll(trackname, "/", "-") // Replace slashes to avoid path issues
+		tracks[trackname] = []Event{}
 	}
 	basepath := path.Join(server.GopherDir, eventname, info.Name)
 	os.RemoveAll(basepath)
@@ -141,7 +143,8 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 			for _, event := range events {
 				e := event
 				e.saal = name
-				tracks[event.Track] = append(tracks[event.Track], e)
+				eventTrack := strings.TrimSpace(event.Track)
+				tracks[eventTrack] = append(tracks[eventTrack], e)
 				roomstring += eventToGopher(event, loc, false, false)
 			}
 			roompath := path.Join(daypath, name+".txt")
@@ -159,8 +162,10 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 	bytrackpath := path.Join(basepath, "By Track")
 	os.MkdirAll(bytrackpath, 0755)
 	for k, v := range tracks {
-		trackpath := path.Join(bytrackpath, k)
-		trackstring := "Track: " + k + "\n"
+		trackname := strings.TrimSpace(k)
+		trackname = strings.ReplaceAll(trackname, "/", "-") // Replace slashes to avoid path issues
+		trackpath := path.Join(bytrackpath, trackname)
+		trackstring := "Track: " + trackname + "\n"
 		trackstring += gopherhelpers.CreateMaxLine("=") + "\n"
 		trackstring += "Time          | Event\n"
 		trackstring += gopherhelpers.CreateMaxLine("-") + "\n"
