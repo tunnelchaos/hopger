@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -133,6 +134,10 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 	bydatepath := path.Join(basepath, "By Date")
 	for i, day := range fahrplan.Schedule.Conference.Days {
 		dayname := "Day " + strconv.Itoa(i) + ": " + day.Date
+		//Check if OS is windows and adjust path accordingly
+		if runtime.GOOS == "windows" {
+			dayname = strings.ReplaceAll(dayname, ":", "")
+		}
 		daypath := path.Join(bydatepath, dayname)
 		os.MkdirAll(daypath, 0755)
 		for name, events := range day.Rooms {
@@ -163,6 +168,9 @@ func (p *PretalxConverter) Convert(eventname string, info config.Info, server co
 	bytrackpath := path.Join(basepath, "By Track")
 	os.MkdirAll(bytrackpath, 0755)
 	for trackname, v := range tracks {
+		if trackname == "" {
+			trackname = "No Track"
+		}
 		trackpath := path.Join(bytrackpath, trackname)
 		trackstring := "Track: " + trackname + "\n"
 		trackstring += gopherhelpers.CreateMaxLine("=") + "\n"
