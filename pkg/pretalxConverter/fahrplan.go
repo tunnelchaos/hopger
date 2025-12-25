@@ -59,7 +59,7 @@ type Day struct {
 
 type Event struct {
 	URL              string        `json:"url"`
-	ID               string        `json:"id"`
+	ID               any           `json:"id"`
 	GUID             string        `json:"guid"`
 	Date             string        `json:"date"`
 	Start            string        `json:"start"`
